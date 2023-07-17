@@ -10,7 +10,7 @@ admin.site.register(models.PmbL03WpContractType)
 
 admin.site.register(models.PmbL03Wp)
 
-admin.site.register(models.ERF)
+admin.site.register(models.ERFQuantum)
 
 admin.site.register(models.PmbL03WpNote)
 admin.site.register(models.PmbL03WpAttachment)

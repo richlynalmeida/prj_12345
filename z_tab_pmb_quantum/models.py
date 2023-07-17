@@ -204,15 +204,18 @@ class PmbL03Wp(models.Model):
         return f"{self.pmb_L03_wp_code} - {self.pmb_L03_wp_title}"
 
 
-class ERF(models.Model):
+class ERFQuantum(models.Model):
     pmb_L03_wp = models.ForeignKey(PmbL03Wp, on_delete=models.CASCADE,
                                    verbose_name='PMB L03 WP ID', default=1)
-    erf_code = models.CharField(unique=True, max_length=55, verbose_name='ERF Code')
-    erf_title = models.CharField(unique=False, max_length=200, blank=True, null=True,
-                                 verbose_name='ERF Title')
+    erf_quantum_code = models.CharField(unique=True, max_length=55, verbose_name='ERF Quantum Code')
+    erf_quantum_title = models.CharField(unique=False, max_length=200, blank=True, null=True,
+                                         verbose_name='ERF Quantum Title')
     comments = models.CharField(max_length=2000, blank=True, null=True, verbose_name='Comments')
     cost_type = models.ForeignKey(CostType, on_delete=models.CASCADE, verbose_name='Cost Type ID',
                                   default=1)
+    erf_ca_code = models.CharField(unique=True, max_length=55, verbose_name='ERF Cost Account Code')
+    erf_ca_title = models.CharField(unique=False, max_length=200, blank=True, null=True,
+                                    verbose_name='ERF Cost Account Title')
     erf_hours = models.DecimalField(max_digits=18, decimal_places=2, blank=True, null=True,
                                     verbose_name='ERF Hours', default=0)
     erf_costs = models.DecimalField(max_digits=18, decimal_places=2, blank=True, null=True,
@@ -220,13 +223,14 @@ class ERF(models.Model):
 
     class Meta:
         managed = True
-        verbose_name_plural = "Estimate Reference File"
-        db_table = 'erf'
+        verbose_name_plural = "Estimate Reference File - Quantum"
+        db_table = 'erf_quantum'
         app_label = 'z_tab_pmb_quantum'
-        ordering = ['erf_code']
+        unique_together = ['pmb_L03_wp', 'erf_ca_code', 'erf_quantum_code']
+        ordering = ['erf_quantum_code']
 
     def __str__(self):
-        return f"{self.erf_code} - {self.erf_title}"
+        return f"{self.erf_quantum_code} - {self.erf_quantum_title}"
 
 
 class PmbL03WpNote(models.Model):
@@ -742,7 +746,8 @@ class PmbL04WpAttachment(models.Model):
 class PmbL04WpNote(models.Model):
     pmb_L04_wp = models.ForeignKey(PmbL04Wp, on_delete=models.CASCADE,
                                    verbose_name='PMB L04 WP ID', default=1)
-    note_no = models.IntegerField(validators=[MinValueValidator(1), MaxValueValidator(1000)], verbose_name='Note Number')
+    note_no = models.IntegerField(validators=[MinValueValidator(1), MaxValueValidator(1000)],
+                                  verbose_name='Note Number')
     title = models.CharField(max_length=100, verbose_name='CBWP Note Title')
     comments = models.CharField(max_length=2000, blank=True, null=True, verbose_name='Comments')
 
